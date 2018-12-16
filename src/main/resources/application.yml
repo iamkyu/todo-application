@@ -1,3 +1,6 @@
+site:
+  author: iamkyu
+
 logging:
   level:
     org.springframework:
