@@ -4,6 +4,7 @@ site:
 
 logging:
   level:
+    todoapp: DEBUG
     org.springframework:
       boot: INFO
-      web: debug
+      web: DEBUG
