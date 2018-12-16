@@ -23,7 +23,7 @@ public class SystemException extends RuntimeException implements MessageSourceRe
 
     @Override
     public String[] getCodes() {
-        return new String[]{"Exception." + ClassUtils.getShortName(getClass())};
+        return new String[]{"Error." + ClassUtils.getShortName(getClass())};
     }
 
     @Override
