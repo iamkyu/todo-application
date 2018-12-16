@@ -1,8 +1,13 @@
 package todoapp.web.model;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
 /**
  * 사이트(site) 정보 모델
  */
+@Component
+@ConfigurationProperties("site")
 public class SiteProperties {
 
     private String author = "unknown";

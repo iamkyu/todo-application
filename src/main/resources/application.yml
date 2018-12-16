@@ -1,5 +1,6 @@
 site:
   author: iamkyu
+  description: Hello To-Do Application
 
 logging:
   level:
