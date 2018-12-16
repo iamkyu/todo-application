@@ -111,4 +111,9 @@ public class Todo {
         return todo;
     }
 
+    public Todo update(String title, boolean completed) {
+        setTitle(title);
+        setState(completed ? TodoState.COMPLETED : TodoState.ACTIVE);
+        return this;
+    }
 }

@@ -32,11 +32,17 @@ public class TodoManage implements TodoFinder, TodoEditor {
 
     @Override
     public Todo update(Long id, String title, boolean completed) {
-        throw new UnsupportedOperationException();
+        return todoRepository.findById(id)
+                .map(item -> item.update(title, completed))
+                .orElseThrow(() -> new TodoEntityNotFoundException(id));
     }
 
     @Override
     public Todo delete(Long id) {
-        throw new UnsupportedOperationException();
+        Todo found = todoRepository.findById(id)
+                .orElseThrow(() -> new TodoEntityNotFoundException(id));
+        todoRepository.delete(found);
+
+        return found;
     }
 }

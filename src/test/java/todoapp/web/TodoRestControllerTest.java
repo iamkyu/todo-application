@@ -1,7 +1,6 @@
 package todoapp.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,14 +15,19 @@ import todoapp.commons.util.StreamUtils;
 import todoapp.core.todos.application.WriteTodoCommand;
 import todoapp.core.todos.domain.Todo;
 import todoapp.core.todos.domain.TodoRepository;
+import todoapp.core.todos.domain.TodoState;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -84,7 +88,7 @@ public class TodoRestControllerTest {
                 .collect(toList());
 
         //then
-        Assertions.assertThat(after.size()).isEqualTo(before.size() + 1);
+        assertThat(after.size()).isEqualTo(before.size() + 1);
     }
 
     @Test
@@ -92,31 +96,43 @@ public class TodoRestControllerTest {
         //given
         WriteTodoCommand wrongCommand = new WriteTodoCommand("abc");
 
-        //when
+        //when then
         mockMvc.perform(post("/api/todos")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(mapper.writeValueAsString(wrongCommand)))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
-
-        //then
     }
 
     @Test
-    public void editTodo() {
+    public void editTodo_200() throws Exception {
         //given
+        WriteTodoCommand updateCommand = new WriteTodoCommand("new title");
+        updateCommand.setCompleted(true);
 
         //when
+        mockMvc.perform(put("/api/todos/{id}", sampleTask.getId())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(mapper.writeValueAsString(updateCommand)))
+                .andExpect(status().isOk())
+                .andDo(print());
 
         //then
+        Todo updated = todoRepository.findById(sampleTask.getId()).get();
+        assertThat(updated.getTitle()).isEqualTo(updateCommand.getTitle());
+        assertThat(updated.getState().getLiteral()).isEqualTo(TodoState.COMPLETED.getLiteral());
     }
 
     @Test
-    public void deleteTodo() {
-        //given
-
-        //when
+    public void deleteTodo_200() throws Exception {
+        //given when
+        mockMvc.perform(delete("/api/todos/{id}", sampleTask.getId())
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andDo(print());
 
         //then
+        Optional<Todo> delete = todoRepository.findById(sampleTask.getId());
+        assertThat(delete.isPresent()).isFalse();
     }
 }

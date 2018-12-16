@@ -6,6 +6,7 @@ import todoapp.core.todos.domain.TodoRepository;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -25,7 +26,9 @@ public class InMemoryTodoRepository implements TodoRepository {
 
     @Override
     public Optional<Todo> findById(Long id) {
-        return Optional.empty();
+        return todos.stream()
+                .filter(item -> Objects.equals(id, item.getId()))
+                .findAny();
     }
 
     @Override
@@ -36,6 +39,6 @@ public class InMemoryTodoRepository implements TodoRepository {
 
     @Override
     public void delete(Todo todo) {
-
+        this.todos.remove(todo);
     }
 }
