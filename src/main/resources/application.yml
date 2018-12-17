@@ -2,6 +2,10 @@ site:
   author: iamkyu
   description: Hello To-Do Application
 
+toggle:
+  auth: true
+  onlineUsersCounter: false
+
 logging:
   level:
     todoapp: DEBUG

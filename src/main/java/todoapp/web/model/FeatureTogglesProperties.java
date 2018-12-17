@@ -1,8 +1,13 @@
 package todoapp.web.model;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
 /**
  * 기능 토글 모델
  */
+@Component
+@ConfigurationProperties("toggle")
 public class FeatureTogglesProperties {
 
     private boolean auth = false;
