@@ -16,11 +16,14 @@ import todoapp.core.todos.application.TodoEditor;
 import todoapp.core.todos.application.TodoFinder;
 import todoapp.core.todos.application.WriteTodoCommand;
 import todoapp.core.todos.domain.Todo;
+import todoapp.security.UserSession;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@RolesAllowed(UserSession.ROLE_USER)
 @RequestMapping(value = "/api/todos")
 public class TodoRestController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

@@ -6,8 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
+import todoapp.security.web.method.RolesVerifyInterceptor;
 import todoapp.security.web.method.UserSessionHandlerMethodArgumentResolver;
 import todoapp.web.view.CsvView;
 
@@ -35,6 +37,11 @@ public class TodosApplication {
             @Override
             public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
                 resolvers.add(new UserSessionHandlerMethodArgumentResolver());
+            }
+
+            @Override
+            public void addInterceptors(InterceptorRegistry registry) {
+                registry.addInterceptor(new RolesVerifyInterceptor());
             }
         };
     }

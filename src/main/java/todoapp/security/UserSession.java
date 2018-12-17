@@ -2,6 +2,7 @@ package todoapp.security;
 
 import todoapp.core.user.domain.User;
 
+import java.security.Principal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
@@ -10,7 +11,7 @@ import java.util.Set;
 /**
  * 사용자 세션 모델
  */
-public class UserSession {
+public class UserSession implements Principal {
 
     public static final String ROLE_USER = "ROLE_USER";
 
@@ -23,6 +24,7 @@ public class UserSession {
 
     }
 
+    @Override
     public String getName() {
         return user.getUsername();
     }
