@@ -1,12 +1,13 @@
 package todoapp.web.model;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
  * 사이트(site) 정보 모델
  */
-@Component
+@ControllerAdvice
 @ConfigurationProperties("site")
 public class SiteProperties {
 
@@ -38,4 +39,8 @@ public class SiteProperties {
         return sb.toString();
     }
 
+    @ModelAttribute("site")
+    public SiteProperties getSiteProperties() {
+        return this;
+    }
 }

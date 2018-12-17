@@ -2,22 +2,18 @@ package todoapp.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import todoapp.commons.domain.Spreadsheet;
 import todoapp.core.todos.application.TodoFinder;
 import todoapp.core.todos.domain.Todo;
-import todoapp.web.model.SiteProperties;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
 public class TodoController {
-    private final SiteProperties siteProperties;
     private final TodoFinder todoFinder;
 
-    public TodoController(SiteProperties siteProperties, TodoFinder todoFinder) {
-        this.siteProperties = siteProperties;
+    public TodoController(TodoFinder todoFinder) {
         this.todoFinder = todoFinder;
     }
 
@@ -40,10 +36,5 @@ public class TodoController {
                 .collect(Collectors.toList());
 
         return new Spreadsheet("todos", header, rows);
-    }
-
-    @ModelAttribute("site")
-    public SiteProperties getSiteProperties() {
-        return siteProperties;
     }
 }
