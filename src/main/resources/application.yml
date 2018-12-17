@@ -4,7 +4,7 @@ site:
 
 toggle:
   auth: true
-  onlineUsersCounter: false
+  onlineUsersCounter: true
 
 logging:
   level:
