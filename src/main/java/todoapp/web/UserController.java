@@ -4,7 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,16 +23,17 @@ public class UserController {
     }
 
     @PostMapping
-    public String doLogin(@Valid LoginCommand command, BindingResult bindingResult, Model model) {
+    public String doLogin(@Valid LoginCommand command) {
         log.debug("command: {}", command);
-
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("bindingResult", bindingResult);
-            model.addAttribute("message", "사용자 이름 또는 비밀번호가 올바르지 않습니다.");
-            return "login";
-        }
-
         return "redirect:/todos";
+    }
+
+    @ExceptionHandler(BindException.class)
+    public void handleBindException(BindException exception, Model model) {
+        //TODO 메세지 하드코딩하지 않고 messageSource로부터 얻어 처리
+        //TODO Error.{ExceptionClassName} 이라는 규칙이 일관되게 적용되려면?
+        model.addAttribute("bindingResult", exception.getBindingResult());
+        model.addAttribute("message", "사용자 이름 또는 비밀번호가 올바르지 않습니다.");
     }
 
     private static class LoginCommand {
