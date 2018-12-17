@@ -9,7 +9,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import todoapp.core.user.application.UserJoinder;
+import todoapp.core.user.application.UserPasswordVerifier;
+import todoapp.core.user.domain.User;
+import todoapp.core.user.domain.UserEntityNotFoundException;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
@@ -18,13 +23,31 @@ import javax.validation.constraints.Size;
 public class UserController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private final UserPasswordVerifier userPasswordVerifier;
+    private final UserJoinder userJoinder;
+
+    public UserController(UserPasswordVerifier userPasswordVerifier, UserJoinder userJoinder) {
+        this.userPasswordVerifier = userPasswordVerifier;
+        this.userJoinder = userJoinder;
+    }
+
     @GetMapping
     public void getLoginPage() {
     }
 
     @PostMapping
-    public String doLogin(@Valid LoginCommand command) {
+    public String doLogin(HttpSession httpSession, @Valid LoginCommand command) {
         log.debug("command: {}", command);
+
+        // TODO 서버가 두 대 이상이라면?
+        try {
+            httpSession.setAttribute(User.class.toString(),
+                    userPasswordVerifier.verify(command.getUsername(), command.getPassword()));
+        } catch (UserEntityNotFoundException e) {
+            httpSession.setAttribute(User.class.toString(),
+                    userJoinder.join(command.getUsername(), command.getPassword()));
+        }
+
         return "redirect:/todos";
     }
 
