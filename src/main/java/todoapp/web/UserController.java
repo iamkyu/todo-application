@@ -2,6 +2,8 @@ package todoapp.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
@@ -9,33 +11,37 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import todoapp.core.user.application.UserJoinder;
 import todoapp.core.user.application.UserPasswordVerifier;
 import todoapp.core.user.domain.User;
 import todoapp.core.user.domain.UserEntityNotFoundException;
+import todoapp.security.UserSession;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 @Controller
-@RequestMapping(value = "/login")
+@RequestMapping
 public class UserController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private final ResourceLoader resourceLoader;
     private final UserPasswordVerifier userPasswordVerifier;
     private final UserJoinder userJoinder;
 
-    public UserController(UserPasswordVerifier userPasswordVerifier, UserJoinder userJoinder) {
+    public UserController(ResourceLoader resourceLoader, UserPasswordVerifier userPasswordVerifier, UserJoinder userJoinder) {
+        this.resourceLoader = resourceLoader;
         this.userPasswordVerifier = userPasswordVerifier;
         this.userJoinder = userJoinder;
     }
 
-    @GetMapping
+    @GetMapping(value = "/login")
     public void getLoginPage() {
     }
 
-    @PostMapping
+    @PostMapping(value = "/login")
     public String doLogin(HttpSession httpSession, @Valid LoginCommand command) {
         log.debug("command: {}", command);
 
@@ -49,6 +55,12 @@ public class UserController {
         }
 
         return "redirect:/todos";
+    }
+
+    @GetMapping("/user/profile-picture")
+    public @ResponseBody Resource profilePicture(UserSession session) {
+        return resourceLoader.getResource(
+                session.getUser().getProfilePicture().getUri().toString());
     }
 
     @ExceptionHandler(BindException.class)
